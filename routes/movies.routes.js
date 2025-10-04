@@ -1,5 +1,5 @@
 const express = require('express');
-const { createOrUpdateMovie, getMovieById, getMovies, deleteMovie } = require('../controllers/movies.controller');
+const { createOrUpdateMovie, getMovieById, getMovies, deleteMovie, createMovie } = require('../controllers/movies.controller');
 
 const router = express.Router();
 
@@ -14,5 +14,10 @@ router.get('/:id', getMovieById);
 
 // DELETE /movies/:id - Eliminar una serie/película por ID
 router.delete('/:id', deleteMovie);
+
+// POST /movies/ - Crear una serie o película nueva
+router.post('/', createMovie);
+
+
 
 module.exports = router;

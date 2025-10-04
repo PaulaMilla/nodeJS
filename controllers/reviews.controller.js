@@ -139,8 +139,68 @@ const updateReview = async (req, res) => {
     }
 };
 
+// Obtener review por ID (sin joins)
+const getReviewById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [rows] = await db.query(
+      'SELECT * FROM review WHERE id_review = ?',
+      [id]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Review no encontrada" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: rows[0],
+      message: "Review obtenida exitosamente"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener la review",
+      error,
+    });
+  }
+};
+
+
+// GET: Obtener todas las reviews
+const getAllReviews = async (req, res) => {
+    try {
+        const [reviews] = await db.query('SELECT * FROM review');
+        res.json(reviews);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener las reviews', error });
+    }
+};
+
+// DELETE: Eliminar una review por ID
+const deleteReview = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const [result] = await db.query('DELETE FROM review WHERE id_review = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Review no encontrada' });
+        }
+
+        res.json({ message: 'Review eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar la review', error });
+    }
+};
+
+
 
 module.exports = {
     createReview,
-    updateReview
+    updateReview,
+    getAllReviews,
+    deleteReview,
+    getReviewById
 };

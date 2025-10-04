@@ -1,4 +1,4 @@
-const db = require('../config/database');
+const { pool } = require('../config/database');
 const bcrypt = require('bcrypt');
 
 exports.registrarUsuario = async (req, res) => {
@@ -10,7 +10,7 @@ exports.registrarUsuario = async (req, res) => {
 
     try {
         // Verifica si el alias o correo ya existen
-        const [usuarios] = await db.query(
+        const [usuarios] = await pool.execute(
             'SELECT id_usuario FROM usuario_registrado WHERE alias = ? OR correo = ?',
             [alias, correo]
         );
@@ -22,14 +22,15 @@ exports.registrarUsuario = async (req, res) => {
         const hash = await bcrypt.hash(password, 10);
 
         // Inserta el usuario
-        await db.query(
+        await pool.execute(
             'INSERT INTO usuario_registrado (rol, url_avatar, nombre, alias, correo, password, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, CURDATE())',
             [rol, url_avatar, nombre, alias, correo, hash]
         );
 
         res.status(201).json({ message: 'Usuario registrado correctamente' });
     } catch (error) {
-        res.status(500).json({ message: 'Error al registrar usuario', error });
+        console.error('Error al registrar usuario:', error);
+        res.status(500).json({ message: 'Error al registrar usuario', error: error.message });
     }
 };
 
@@ -46,7 +47,7 @@ exports.cambiarPassword = async (req, res) => {
 
     try {
         // Obtener el hash actual
-        const [rows] = await db.query('SELECT password FROM usuario_registrado WHERE id_usuario = ?', [id]);
+        const [rows] = await pool.execute('SELECT password FROM usuario_registrado WHERE id_usuario = ?', [id]);
         if (rows.length === 0) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
@@ -59,7 +60,7 @@ exports.cambiarPassword = async (req, res) => {
 
         // Hashear la nueva contraseña
         const hashNueva = await bcrypt.hash(nueva, 10);
-        await db.query('UPDATE usuario_registrado SET password = ? WHERE id_usuario = ?', [hashNueva, id]);
+        await pool.execute('UPDATE usuario_registrado SET password = ? WHERE id_usuario = ?', [hashNueva, id]);
         res.json({ message: 'Contraseña actualizada correctamente' });
     } catch (error) {
         res.status(500).json({ message: 'Error al cambiar la contraseña', error });

@@ -101,7 +101,7 @@ const getMovies = async (req, res) => {
             ORDER BY sp.fecha DESC
         `;
         
-        const [rows] = await db.execute(query);
+        const [rows] = await pool.execute(query);
         
         // Convertir temporadas null a 0 para películas y formatear géneros
         const formattedRows = rows.map(row => ({
@@ -146,13 +146,20 @@ const getMovieById = async (req, res) => {
         });
     } catch (error) {
         console.error('Error en getMovieById:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor',
+            error: error.message
+        });
+    }
+};
 // DELETE - Eliminar una serie/película por ID
 const deleteMovie = async (req, res) => {
     try {
         const { id } = req.params;
         
         // Verificar si la serie/película existe
-        const [existingMovie] = await db.execute('SELECT * FROM serie_pelicula WHERE id_sp = ?', [id]);
+        const [existingMovie] = await pool.execute('SELECT * FROM serie_pelicula WHERE id_sp = ?', [id]);
         
         if (existingMovie.length === 0) {
             return res.status(404).json({
@@ -162,7 +169,7 @@ const deleteMovie = async (req, res) => {
         }
 
         // Obtener una conexión para manejar la transacción
-        const connection = await db.getConnection();
+        const connection = await pool.getConnection();
         
         try {
             // Iniciar transacción
@@ -231,4 +238,4 @@ module.exports = {
     getMovieById,
     getMovies,
     deleteMovie
-};
+}

@@ -1,4 +1,4 @@
-const db = require('../config/database');
+const { pool } = require('../config/database');
 
 // POST - Crear una nueva reseña
 const createReview = async (req, res) => {
@@ -22,7 +22,7 @@ const createReview = async (req, res) => {
         }
 
         // Verificar si la serie/película existe
-        const [spExists] = await db.execute('SELECT id_sp, nombre FROM serie_pelicula WHERE id_sp = ?', [sp_id]);
+        const [spExists] = await pool.execute('SELECT id_sp, nombre FROM serie_pelicula WHERE id_sp = ?', [sp_id]);
         if (spExists.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -31,7 +31,7 @@ const createReview = async (req, res) => {
         }
 
         // Verificar si el usuario existe
-        const [userExists] = await db.execute('SELECT id_usuario, nombre FROM usuario_registrado WHERE id_usuario = ?', [user_id]);
+        const [userExists] = await pool.execute('SELECT id_usuario, nombre FROM usuario_registrado WHERE id_usuario = ?', [user_id]);
         if (userExists.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -40,7 +40,7 @@ const createReview = async (req, res) => {
         }
 
         // Verificar si el usuario ya tiene una reseña para esta serie/película
-        const [existingReview] = await db.execute(`
+        const [existingReview] = await pool.execute(`
             SELECT r.id_review 
             FROM review r
             JOIN review_sp rs ON r.id_review = rs.fk_review
@@ -56,7 +56,7 @@ const createReview = async (req, res) => {
         }
 
         // Obtener una conexión para manejar la transacción
-        const connection = await db.getConnection();
+        const connection = await pool.getConnection();
         
         try {
             // Iniciar transacción
@@ -124,7 +124,7 @@ const updateReview = async (req, res) => {
     const { comentario, rating, cantidad_likes, fecha, spoiler } = req.body;
 
     try {
-        const [result] = await db.query(
+        const [result] = await pool.execute(
             `UPDATE review SET comentario = ?, rating = ?, cantidad_likes = ?, fecha = ?, spoiler = ? WHERE id_review = ?`,
             [comentario, rating, cantidad_likes, fecha, spoiler, id]
         );

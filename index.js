@@ -1,18 +1,17 @@
 const express = require('express');
 const { testConnection } = require('./config/database');
-const moviesRoutes = require('./routes/movies.routes');
-const directorsRoutes = require('./routes/directors.routes');
-
 const app = express();
 const port = 3000;
+// Probar conexión a la base de datos
+//await testConnection();
+const moviesRoutes = require('./routes/movies.routes')
+const reviewRoutes = require('./routes/reviews.routes');
+const usuarioRoutes = require('./routes/users.routes');
+const directorsRoutes = require('./routes/directors.routes');
 
 // Middleware
-app.use(express.json()); // Para parsear JSON
 app.use(express.urlencoded({ extended: true })); // Para parsear form data
-
-// Rutas
-app.use('/api/movies', moviesRoutes);
-app.use('/api/directors', directorsRoutes);
+app.use(express.json());
 
 // Ruta de prueba
 app.get('/', (req, res) => {
@@ -34,11 +33,23 @@ app.get('/', (req, res) => {
     });
 });
 
-// Inicialización del servidor
-app.listen(port, async () => {
-    console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
-    
-    // Probar conexión a la base de datos
-    await testConnection();
+
+
+//Rutas de movies
+app.use('/movies', moviesRoutes);
+
+//Rutas de reviews
+app.use('/reviews', reviewRoutes);
+
+//Ruta PATCH contraseña usuario
+app.use('/usuarios', usuarioRoutes);
+
+// Rutas
+app.use('/api/directors', directorsRoutes);
+
+
+//Inicialización del server
+app.listen(port, ()=>{
+    console.log(`Servidor arriba master 🚀 escuchando en http://localhost:${port}`);
 });
 

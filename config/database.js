@@ -1,10 +1,10 @@
-const mysql = require('mysql2/promise');
+const mysql = require('mysql2/promise')
 
 const db = mysql.createPool({
     host: 'localhost',
-    user: 'root',         // Usuario por defecto de XAMPP
-    password: '',         // Por defecto, sin contraseña en XAMPP
-    database: 'nodejs',   // Tu base de datos
+    user: 'root',
+    password: '',
+    database: 'nodejs',
     waitForConnections: true
 });
 

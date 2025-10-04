@@ -236,46 +236,59 @@ const deleteMovie = async (req, res) => {
 
 // Crear serie/película (POST)
 const createMovie = async (req, res) => {
-    try {
-        const { nombre, descripcion, fecha, url_foto, temporadas } = req.body;
+  try {
+    const { nombre, descripcion, fecha, url_foto, temporadas } = req.body;
 
-        // Validaciones básicas
-        if (!nombre) {
-            return res.status(400).json({
-                success: false,
-                message: 'El nombre es obligatorio'
-            });
-        }
-
-        const query = `
-            INSERT INTO serie_pelicula (nombre, descripcion, fecha, url_foto, temporadas)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        const values = [nombre, descripcion, fecha, url_foto, temporadas];
-
-        const [result] = await pool.execute(query, values);
-
-        res.status(201).json({
-            success: true,
-            message: 'Serie/Película creada exitosamente',
-            data: {
-                id_sp: result.insertId,
-                nombre,
-                descripcion,
-                fecha,
-                url_foto,
-                temporadas
-            }
-        });
-
-    } catch (error) {
-        console.error('Error en createMovie:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error interno del servidor',
-            error: error.message
-        });
+    // Validación básica
+    if (!nombre) {
+      return res.status(400).json({
+        success: false,
+        message: 'El nombre es obligatorio'
+      });
     }
+
+    // Verificar si ya existe una serie/película con el mismo nombre
+    const [existing] = await pool.execute(
+      'SELECT id_sp FROM serie_pelicula WHERE LOWER(nombre) = LOWER(?)',
+      [nombre]
+    );
+
+    if (existing.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: `La serie/película ya existe en la base de datos`
+      });
+    }
+
+    // Insertar si no existe
+    const query = `
+      INSERT INTO serie_pelicula (nombre, descripcion, fecha, url_foto, temporadas)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const values = [nombre, descripcion, fecha, url_foto, temporadas];
+    const [result] = await pool.execute(query, values);
+
+    res.status(201).json({
+      success: true,
+      message: 'Serie/Película creada exitosamente',
+      data: {
+        id_sp: result.insertId,
+        nombre,
+        descripcion,
+        fecha,
+        url_foto,
+        temporadas
+      }
+    });
+
+  } catch (error) {
+    console.error('Error en createMovie:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor',
+      error: error.message
+    });
+  }
 };
 
 module.exports = {

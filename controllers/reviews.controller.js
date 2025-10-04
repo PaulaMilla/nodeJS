@@ -144,7 +144,7 @@ const getReviewById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const [rows] = await db.query(
+    const [rows] = await pool.execute(
       'SELECT * FROM review WHERE id_review = ?',
       [id]
     );
@@ -171,7 +171,7 @@ const getReviewById = async (req, res) => {
 // GET: Obtener todas las reviews
 const getAllReviews = async (req, res) => {
     try {
-        const [reviews] = await db.query('SELECT * FROM review');
+        const [reviews] = await pool.execute('SELECT * FROM review');
         res.json(reviews);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener las reviews', error });
@@ -183,7 +183,7 @@ const deleteReview = async (req, res) => {
     const id = req.params.id;
 
     try {
-        const [result] = await db.query('DELETE FROM review WHERE id_review = ?', [id]);
+        const [result] = await pool.execute('DELETE FROM review WHERE id_review = ?', [id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Review no encontrada' });

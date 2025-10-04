@@ -45,7 +45,7 @@ app.use('/reviews', reviewRoutes);
 app.use('/usuarios', usuarioRoutes);
 
 // Rutas
-app.use('/api/directors', directorsRoutes);
+app.use('/directors', directorsRoutes);
 
 
 //Inicialización del server

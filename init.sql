@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-07-2025 a las 18:29:49
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Tiempo de generación: 06-10-2025 a las 02:03:48
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.1.17
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -72,6 +72,53 @@ INSERT INTO `actor_sp` (`fk_actor`, `fk_sp`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `director`
+--
+
+CREATE TABLE `director` (
+  `id_director` bigint(20) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `url_foto` varchar(255) DEFAULT NULL,
+  `nacionalidad` varchar(100) DEFAULT NULL,
+  `fecha_nacimiento` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `director`
+--
+
+INSERT INTO `director` (`id_director`, `nombre`, `url_foto`, `nacionalidad`, `fecha_nacimiento`) VALUES
+(1, 'Vincent Gilligan', 'https://m.media-amazon.com/images/M/MV5BOTE2NTRkMmYtMTBiMS00YzE2LTkxNTctNjcxMzM1ODY0NzM5XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 'Estadounidense', '1967-02-10'),
+(2, 'Matt Duffer', 'https://m.media-amazon.com/images/M/MV5BYzU1YTVjNTAtZWY1My00ZjQxLWJkYWUtZmY5ODg0NzY5MzMxXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 'Estadounidense', '1984-02-15'),
+(3, 'Makoto Shinkai', 'https://m.media-amazon.com/images/M/MV5BN2YxYTU2NjctY2Y1MC00MzZkLWJlNmYtODJjMWI2YmQ1NzM1XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 'Japonés', '1973-02-09'),
+(4, 'Hayao Miyazaki', 'https://m.media-amazon.com/images/M/MV5BMTYyMjAzNTYxMl5BMl5BanBnXkFtZTcwMDQxMjIwNA@@._V1_FMjpg_UX1000_.jpg', 'Japonés', '1941-01-05'),
+(5, 'Christopher Nolan', 'https://m.media-amazon.com/images/M/MV5BNjE3NDQyOTYyMV5BMl5BanBnXkFtZTcwODcyODU2Mw@@._V1_FMjpg_UX1000_.jpg', 'Británico-Estadounidense', '1970-07-30');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `director_sp`
+--
+
+CREATE TABLE `director_sp` (
+  `fk_director` bigint(20) NOT NULL,
+  `fk_sp` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `director_sp`
+--
+
+INSERT INTO `director_sp` (`fk_director`, `fk_sp`) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 5),
+(5, 7);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `genero`
 --
 
@@ -113,7 +160,7 @@ CREATE TABLE `review` (
 --
 
 INSERT INTO `review` (`id_review`, `comentario`, `rating`, `cantidad_likes`, `fecha`, `spoiler`) VALUES
-(1, 'Obra maestra de principio a fin.', 9.8, 250, '2023-06-15', 0),
+(1, 'No obra maestra de principio a fin.', 1.5, 10, '2025-10-02', 0),
 (2, 'Gran ambientación y nostalgia ochentera.', 8.5, 180, '2023-06-20', 0),
 (3, 'Una historia emocionalmente poderosa y hermosa.', 9.2, 300, '2023-07-01', 0),
 (4, 'Narrativa intensa y giros inesperados.', 9.0, 210, '2023-05-10', 1),
@@ -124,7 +171,8 @@ INSERT INTO `review` (`id_review`, `comentario`, `rating`, `cantidad_likes`, `fe
 (9, 'El desarrollo de personajes es simplemente brillante.', 9.3, 245, '2023-06-22', 0),
 (10, 'Una narrativa única que rompe los esquemas clásicos.', 9.1, 200, '2023-06-25', 0),
 (11, 'jujuju', 5.9, 0, '2025-06-12', 1),
-(12, 'buenw buenq ', 5.0, 0, '2025-06-13', 1);
+(12, 'buenw buenq ', 5.0, 0, '2025-06-13', 1),
+(13, '¡Una obra maestra absoluta!', 9.5, 0, '2025-10-05', 0);
 
 -- --------------------------------------------------------
 
@@ -150,7 +198,8 @@ INSERT INTO `review_sp` (`fk_review`, `fk_sp`) VALUES
 (4, 4),
 (5, 5),
 (9, 6),
-(10, 7);
+(10, 7),
+(13, 10);
 
 -- --------------------------------------------------------
 
@@ -172,7 +221,7 @@ CREATE TABLE `serie_pelicula` (
 --
 
 INSERT INTO `serie_pelicula` (`id_sp`, `nombre`, `descripcion`, `fecha`, `url_foto`, `temporadas`) VALUES
-(1, 'Breaking Bad', 'Un profesor de química con cáncer se convierte en fabricante de metanfetamina.', '2008-01-20', 'https://m.media-amazon.com/images/M/MV5BMzU5ZGYzNmQtMTdhYy00OGRiLTg0NmQtYjVjNzliZTg1ZGE4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 5),
+(1, 'Breaking Bad - Director\'s Cut', 'Un profesor de química con cáncer se convierte en fabricante de metanfetamina. Versión extendida.', '2008-01-20', 'https://nueva-imagen.jpg', 5),
 (2, 'Stranger Things', 'Un grupo de niños se enfrenta a fenómenos paranormales en Hawkins.', '2016-07-15', 'https://visualprint-store.com/cdn/shop/files/uKYUR8GPkKRCksczYDJb3pwZauo.jpg?v=1684258044&width=1946', 4),
 (3, 'Your Name', 'Dos adolescentes conectan a través de sueños en un fenómeno sobrenatural.', '2016-08-26', 'https://visualprint-store.com/cdn/shop/products/q719jXXEzOoYaps6babgKnONONX.jpg?v=1665615053&width=1445', 0),
 (4, 'Attack on Titan', 'Humanos luchan contra titanes gigantes que amenazan su existencia.', '2013-04-07', 'https://images-cdn.ubuy.co.id/66fe8d03f002e434317e000d-trends-international-attack-on-titan.jpg', 4),
@@ -188,7 +237,8 @@ INSERT INTO `serie_pelicula` (`id_sp`, `nombre`, `descripcion`, `fecha`, `url_fo
 (14, 'Dandadan', 'DAN DA DAN: EVIL EYE sigue a Momo y Okarun, dos adolescentes que viajan a un misterioso pueblo de aguas termales para investigar un caso paranormal. Pero nada es lo que parece y pronto enfrentan fuerzas ocultas más peligrosas de lo esperado', '2020-05-15', 'https://a.storyblok.com/f/178900/1064x1504/54fc2adbc2/dan-da-dan-second-key-visual.jpg/m/filters:quality(95)format(webp)', 2),
 (15, 'Orgullo y prejuicio', 'Elizabeth Bennet conoce al apuesto y adinerado Sr. Darcy, con quien, rápidamente, inicia una intensa y compleja relación.', '2005-05-15', 'https://m.media-amazon.com/images/S/pv-target-images/15a41e61c30b3e9df74d61ac747fe3e1d5dc4ba30cf8ca3ac85a9148344efeba.jpg', 1),
 (16, 'La La Land: ciudad de sueños', 'Sebastian, un pianista de jazz, y Mia, una aspirante a actriz, se enamoran locamente; pero la ambición desmedida que tienen por triunfar en sus respectivas carreras, en una ciudad como Los Ángeles, repleta de competencia y carente de piedad, pone en peligro su amor.', '2017-05-15', 'https://pics.filmaffinity.com/La_ciudad_de_las_estrellas_La_La_Land-133356261-large.jpg', 1),
-(17, 'Call me by your name', 'En Italia, en la década de 1980, en medio del esplendor del verano, Elio y Oliver descubren la embriagadora belleza de un deseo naciente que va a alterar sus vidas para siempre.', '2018-05-15', 'https://pics.filmaffinity.com/Call_Me_by_Your_Name-241496265-large.jpg', 1);
+(17, 'Call me by your name', 'En Italia, en la década de 1980, en medio del esplendor del verano, Elio y Oliver descubren la embriagadora belleza de un deseo naciente que va a alterar sus vidas para siempre.', '2018-05-15', 'https://pics.filmaffinity.com/Call_Me_by_Your_Name-241496265-large.jpg', 1),
+(18, 'Director\'s Cut', 'Se debe de probar. Versión extendida.', '2008-01-20', 'https://nueva-imagen.jpg', 5);
 
 -- --------------------------------------------------------
 
@@ -280,6 +330,7 @@ CREATE TABLE `usuario_review` (
 INSERT INTO `usuario_review` (`fk_usuario`, `fk_review`, `fecha`) VALUES
 (1, 1, '2023-06-16'),
 (1, 11, '2025-06-12'),
+(1, 13, '2025-10-05'),
 (2, 2, '2023-06-21'),
 (3, 3, '2023-07-02'),
 (4, 4, '2023-05-11'),
@@ -312,75 +363,6 @@ INSERT INTO `usuario_sp` (`fk_usuario`, `fk_sp`, `estado`) VALUES
 (4, 5, 'pendiente'),
 (5, 1, 'viendo');
 
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `director`
---
-
-CREATE TABLE `director` (
-  `id_director` bigint(20) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `url_foto` varchar(255) DEFAULT NULL,
-  `nacionalidad` varchar(100) DEFAULT NULL,
-  `fecha_nacimiento` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `director_sp`
---
-
-CREATE TABLE `director_sp` (
-  `fk_director` bigint(20) NOT NULL,
-  `fk_sp` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `director`
---
-
-INSERT INTO `director` (`id_director`, `nombre`, `url_foto`, `nacionalidad`, `fecha_nacimiento`) VALUES
-(1, 'Vince Gilligan', 'https://m.media-amazon.com/images/M/MV5BOTE2NTRkMmYtMTBiMS00YzE2LTkxNTctNjcxMzM1ODY0NzM5XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 'Estadounidense', '1967-02-10'),
-(2, 'Matt Duffer', 'https://m.media-amazon.com/images/M/MV5BYzU1YTVjNTAtZWY1My00ZjQxLWJkYWUtZmY5ODg0NzY5MzMxXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 'Estadounidense', '1984-02-15'),
-(3, 'Makoto Shinkai', 'https://m.media-amazon.com/images/M/MV5BN2YxYTU2NjctY2Y1MC00MzZkLWJlNmYtODJjMWI2YmQ1NzM1XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg', 'Japonés', '1973-02-09'),
-(4, 'Hayao Miyazaki', 'https://m.media-amazon.com/images/M/MV5BMTYyMjAzNTYxMl5BMl5BanBnXkFtZTcwMDQxMjIwNA@@._V1_FMjpg_UX1000_.jpg', 'Japonés', '1941-01-05'),
-(5, 'Christopher Nolan', 'https://m.media-amazon.com/images/M/MV5BNjE3NDQyOTYyMV5BMl5BanBnXkFtZTcwODcyODU2Mw@@._V1_FMjpg_UX1000_.jpg', 'Británico-Estadounidense', '1970-07-30');
-
---
--- Volcado de datos para la tabla `director_sp`
---
-
-INSERT INTO `director_sp` (`fk_director`, `fk_sp`) VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(4, 5),
-(5, 7);
-
---
--- Índices para la tabla `director`
---
-ALTER TABLE `director`
-  ADD PRIMARY KEY (`id_director`);
-
---
--- Índices para la tabla `director_sp`
---
-ALTER TABLE `director_sp`
-  ADD PRIMARY KEY (`fk_director`,`fk_sp`),
-  ADD KEY `fk_sp` (`fk_sp`);
-
---
--- AUTO_INCREMENT de la tabla `director`
---
-ALTER TABLE `director`
-  MODIFY `id_director` bigint(20) NOT NULL AUTO_INCREMENT;
-
-
-
 --
 -- Índices para tablas volcadas
 --
@@ -396,6 +378,19 @@ ALTER TABLE `actor`
 --
 ALTER TABLE `actor_sp`
   ADD PRIMARY KEY (`fk_actor`,`fk_sp`),
+  ADD KEY `fk_sp` (`fk_sp`);
+
+--
+-- Indices de la tabla `director`
+--
+ALTER TABLE `director`
+  ADD PRIMARY KEY (`id_director`);
+
+--
+-- Indices de la tabla `director_sp`
+--
+ALTER TABLE `director_sp`
+  ADD PRIMARY KEY (`fk_director`,`fk_sp`),
   ADD KEY `fk_sp` (`fk_sp`);
 
 --
@@ -464,6 +459,12 @@ ALTER TABLE `actor`
   MODIFY `id_actor` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT de la tabla `director`
+--
+ALTER TABLE `director`
+  MODIFY `id_director` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT de la tabla `genero`
 --
 ALTER TABLE `genero`
@@ -473,13 +474,13 @@ ALTER TABLE `genero`
 -- AUTO_INCREMENT de la tabla `review`
 --
 ALTER TABLE `review`
-  MODIFY `id_review` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_review` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `serie_pelicula`
 --
 ALTER TABLE `serie_pelicula`
-  MODIFY `id_sp` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_sp` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_registrado`
@@ -497,6 +498,13 @@ ALTER TABLE `usuario_registrado`
 ALTER TABLE `actor_sp`
   ADD CONSTRAINT `actor_sp_ibfk_1` FOREIGN KEY (`fk_actor`) REFERENCES `actor` (`id_actor`),
   ADD CONSTRAINT `actor_sp_ibfk_2` FOREIGN KEY (`fk_sp`) REFERENCES `serie_pelicula` (`id_sp`);
+
+--
+-- Filtros para la tabla `director_sp`
+--
+ALTER TABLE `director_sp`
+  ADD CONSTRAINT `director_sp_ibfk_1` FOREIGN KEY (`fk_director`) REFERENCES `director` (`id_director`),
+  ADD CONSTRAINT `director_sp_ibfk_2` FOREIGN KEY (`fk_sp`) REFERENCES `serie_pelicula` (`id_sp`);
 
 --
 -- Filtros para la tabla `review_sp`
@@ -525,16 +533,6 @@ ALTER TABLE `usuario_review`
 ALTER TABLE `usuario_sp`
   ADD CONSTRAINT `usuario_sp_ibfk_1` FOREIGN KEY (`fk_usuario`) REFERENCES `usuario_registrado` (`id_usuario`),
   ADD CONSTRAINT `usuario_sp_ibfk_2` FOREIGN KEY (`fk_sp`) REFERENCES `serie_pelicula` (`id_sp`);
-
-
-
---
--- Restricciones para la tabla `director_sp`
---
-ALTER TABLE `director_sp`
-  ADD CONSTRAINT `director_sp_ibfk_1` FOREIGN KEY (`fk_director`) REFERENCES `director` (`id_director`),
-  ADD CONSTRAINT `director_sp_ibfk_2` FOREIGN KEY (`fk_sp`) REFERENCES `serie_pelicula` (`id_sp`);
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

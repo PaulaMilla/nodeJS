@@ -66,4 +66,70 @@ exports.cambiarPassword = async (req, res) => {
         res.status(500).json({ message: 'Error al cambiar la contraseña', error });
     }
 };
-//chayanne
+
+// PATCH - Actualizar alias de usuario
+exports.actualizarAlias = async (req, res) => {
+    const id = req.params.id;
+    const { alias } = req.body;
+
+    // Validar que se envió el alias
+    if (!alias || alias.trim() === '') {
+        return res.status(400).json({ 
+            success: false,
+            message: 'El alias es requerido' 
+        });
+    }
+
+    try {
+        // Verificar que el usuario existe
+        const [usuario] = await pool.execute(
+            'SELECT id_usuario, nombre, alias FROM usuario_registrado WHERE id_usuario = ?',
+            [id]
+        );
+
+        if (usuario.length === 0) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Usuario no encontrado' 
+            });
+        }
+
+        // Verificar que el nuevo alias no esté en uso por otro usuario
+        const [aliasExistente] = await pool.execute(
+            'SELECT id_usuario FROM usuario_registrado WHERE alias = ? AND id_usuario != ?',
+            [alias, id]
+        );
+
+        if (aliasExistente.length > 0) {
+            return res.status(409).json({ 
+                success: false,
+                message: 'El alias ya está en uso por otro usuario' 
+            });
+        }
+
+        // Actualizar el alias
+        await pool.execute(
+            'UPDATE usuario_registrado SET alias = ? WHERE id_usuario = ?',
+            [alias, id]
+        );
+
+        res.status(200).json({ 
+            success: true,
+            message: 'Alias actualizado correctamente',
+            data: {
+                id_usuario: id,
+                nombre: usuario[0].nombre,
+                alias_anterior: usuario[0].alias,
+                alias_nuevo: alias
+            }
+        });
+
+    } catch (error) {
+        console.error('Error al actualizar alias:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error al actualizar el alias', 
+            error: error.message 
+        });
+    }
+};

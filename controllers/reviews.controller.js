@@ -195,12 +195,65 @@ const deleteReview = async (req, res) => {
     }
 };
 
+// PATCH - Actualizar comentario de una review
+const updateReviewComment = async (req, res) => {
+    const { id } = req.params;
+    const { comentario } = req.body;
 
+    // Validar que se envió el comentario
+    if (comentario === undefined) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'El comentario es requerido' 
+        });
+    }
+
+    try {
+        // Verificar que la review existe
+        const [review] = await pool.execute(
+            'SELECT id_review, comentario, rating FROM review WHERE id_review = ?',
+            [id]
+        );
+
+        if (review.length === 0) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Review no encontrada' 
+            });
+        }
+
+        // Actualizar el comentario
+        const [result] = await pool.execute(
+            'UPDATE review SET comentario = ? WHERE id_review = ?',
+            [comentario, id]
+        );
+
+        res.status(200).json({ 
+            success: true,
+            message: 'Comentario actualizado correctamente',
+            data: {
+                id_review: id,
+                comentario_anterior: review[0].comentario,
+                comentario_nuevo: comentario,
+                rating: review[0].rating
+            }
+        });
+
+    } catch (error) {
+        console.error('Error al actualizar comentario:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error al actualizar el comentario', 
+            error: error.message 
+        });
+    }
+};
 
 module.exports = {
     createReview,
     updateReview,
     getAllReviews,
     deleteReview,
-    getReviewById
+    getReviewById,
+    updateReviewComment
 };

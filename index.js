@@ -8,6 +8,7 @@ const moviesRoutes = require('./routes/movies.routes')
 const reviewRoutes = require('./routes/reviews.routes');
 const usuarioRoutes = require('./routes/users.routes');
 const directorsRoutes = require('./routes/directors.routes');
+const actorsRoutes = require('./routes/actors.routes');
 
 // Middleware
 app.use(express.urlencoded({ extended: true })); // Para parsear form data
@@ -46,6 +47,9 @@ app.use('/usuarios', usuarioRoutes);
 
 // Rutas
 app.use('/directors', directorsRoutes);
+
+// Rutas de actores
+app.use('/actors', actorsRoutes);
 
 
 //Inicialización del server

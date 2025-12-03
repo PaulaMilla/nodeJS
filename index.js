@@ -9,6 +9,7 @@ const reviewRoutes = require('./routes/reviews.routes');
 const usuarioRoutes = require('./routes/users.routes');
 const directorsRoutes = require('./routes/directors.routes');
 const actorsRoutes = require('./routes/actors.routes');
+const genresRoutes = require('./routes/genres.routes');
 
 // Middleware
 app.use(express.urlencoded({ extended: true })); // Para parsear form data
@@ -51,6 +52,8 @@ app.use('/directors', directorsRoutes);
 // Rutas de actores
 app.use('/actors', actorsRoutes);
 
+//Ruta de generos
+app.use('/genres', genresRoutes);
 
 //Inicialización del server
 app.listen(port, ()=>{

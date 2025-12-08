@@ -1,7 +1,7 @@
 const { pool } = require('../config/database');
 const bcrypt = require('bcrypt');
 
-exports.registrarUsuario = async (req, res) => {
+const registrarUsuario = async (req, res) => {
     const { rol, url_avatar, nombre, alias, correo, password } = req.body;
 
     if (!rol || !nombre || !alias || !correo || !password) {
@@ -34,7 +34,7 @@ exports.registrarUsuario = async (req, res) => {
     }
 };
 
-exports.cambiarPassword = async (req, res) => {
+const cambiarPassword = async (req, res) => {
     const id = req.params.id;
     const { actual, nueva, repetir } = req.body;
 
@@ -68,7 +68,7 @@ exports.cambiarPassword = async (req, res) => {
 };
 
 // PATCH - Actualizar alias de usuario
-exports.actualizarAlias = async (req, res) => {
+const actualizarAlias = async (req, res) => {
     const id = req.params.id;
     const { alias } = req.body;
 
@@ -132,4 +132,104 @@ exports.actualizarAlias = async (req, res) => {
             error: error.message 
         });
     }
+};
+
+// GET - Obtener todos los usuarios registrados
+const obtenerTodosUsuarios = async (req, res) => {
+    try {
+        const [usuarios] = await pool.execute(
+            'SELECT id_usuario, rol, url_avatar, nombre, alias, correo, fecha_registro FROM usuario_registrado ORDER BY fecha_registro DESC'
+        );
+
+        res.status(200).json({ 
+            success: true,
+            total: usuarios.length,
+            data: usuarios
+        });
+
+    } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error al obtener los usuarios', 
+            error: error.message 
+        });
+    }
+};
+
+// GET - Obtener usuario registrado por ID
+const obtenerUsuario = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const [usuario] = await pool.execute(
+            'SELECT id_usuario, rol, url_avatar, nombre, alias, correo, fecha_registro FROM usuario_registrado WHERE id_usuario = ?',
+            [id]
+        );
+
+        if (usuario.length === 0) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Usuario no encontrado' 
+            });
+        }
+
+        res.status(200).json({ 
+            success: true,
+            data: usuario[0]
+        });
+
+    } catch (error) {
+        console.error('Error al obtener usuario:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error al obtener el usuario', 
+            error: error.message 
+        });
+    }
+};
+
+// PUT - Actualizar usuario registrado
+const actualizarCrearUsuario = async (req, res) => {
+    const { id } = req.params;
+    const { rol, url_avatar, nombre, alias, correo } = req.body;
+
+    if (!nombre || !alias || !correo || !rol) {
+        return res.status(400).json({ message: 'Faltan campos requeridos: nombre, alias, correo, rol' });
+    }
+
+    try {
+        const [check] = await pool.execute(
+            'SELECT * FROM usuario_registrado WHERE id_usuario = ?',
+            [id]
+        );
+
+        if (check.length === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        await pool.execute(
+            'UPDATE usuario_registrado SET rol = ?, url_avatar = ?, nombre = ?, alias = ?, correo = ? WHERE id_usuario = ?',
+            [rol, url_avatar, nombre, alias, correo, id]
+        );
+
+        res.status(200).json({ 
+            message: 'Usuario actualizado exitosamente',
+            id_usuario: id,
+            data: { rol, url_avatar, nombre, alias, correo }
+        });
+
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        res.status(500).json({ message: 'Error al actualizar usuario', error: error.message });
+    }
+};
+
+module.exports = {
+    registrarUsuario,
+    cambiarPassword,
+    actualizarAlias,
+    obtenerTodosUsuarios,
+    obtenerUsuario,
+    actualizarCrearUsuario
 };
